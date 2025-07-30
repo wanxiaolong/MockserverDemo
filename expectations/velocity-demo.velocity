@@ -1,0 +1,19 @@
+#set($jsonBody = $json.parse($!request.body))
+{
+  "statusCode": 200,
+  "headers": {
+    "Content-Type": [
+      "application/json"
+    ]
+  },
+  "body": [
+    #foreach( $id in $jsonBody.idList )
+    {
+      "id": "$id",
+      "name": "name_$id",
+      "email": "some_email_$id@666.com"
+    }
+    #if($foreach.hasNext),#end
+    #end
+  ]
+}

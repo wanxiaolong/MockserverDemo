@@ -1,0 +1,28 @@
+#!/bin/bash
+
+echo "[GitHook] Running pre-commit hook..."
+
+# ------------- Running Expectation Hook -----------------
+echo '[GitHook] Running expectation hook...'
+# 手动编译Java文件
+javac -d target/classes src/main/java/com/demo/hooks/UpdateExpectationHook.java
+if [ $? -ne 0 ]; then
+    echo "[GitHook] Error occurred while executing 'javac UpdateExpectationHook.java'."
+    exit 1
+fi
+
+# 手动执行Java文件
+java -classpath target/classes com.demo.hooks.UpdateExpectationHook
+if [ $? -ne 0 ]; then
+    echo "[GitHook] Error occurred while executing 'java UpdateExpectationHook'."
+    exit 1
+fi
+echo '[GitHook] Running expectation hook completed'
+
+# Java代码会修改这个 config/initializerJson.json，所以执行勾子后需要重新把这个文件
+# 加入到git的修改中，便于勾子执行结束后能正常提交
+git add config/initializerJson.json
+#------------Checking coding style issues done-------------
+
+echo "[GitHook] Pre-commit hook completed successfully."
+exit 0

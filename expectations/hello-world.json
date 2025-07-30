@@ -1,0 +1,13 @@
+{
+  "id": "001",
+  "httpRequest": {
+    "method": "GET",
+    "path": "/api/hello-world"
+  },
+  "httpResponse": {
+    "headers": {
+      "content-type": ["application/json"]
+    },
+    "body": "{\"message\":\"Hello World!!\"}"
+  }
+}

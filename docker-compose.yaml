@@ -1,0 +1,13 @@
+services:
+  mockserver:
+    container_name: mockserver
+    image: mockserver/mockserver:5.15.0
+    ports:
+      - "1080:1080"
+    environment:
+      # 指定mockserver的配置文件，用于配置mockserver自身如何运行
+      MOCKSERVER_PROPERTY_FILE: "/config/mockserver.properties"
+      # 指定mockserver的初始化文件，用于在启动mockserver的时候初始化expectations
+      MOCKSERVER_INITIALIZATION_JSON_PATH: "/config/initializerJson.json"
+    volumes:
+    - ./config:/config

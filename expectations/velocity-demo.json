@@ -1,0 +1,17 @@
+{
+  "id": "002",
+  "httpRequest": {
+    "method": "POST",
+    "path": "/api/velocity-demo",
+    "body": {
+      "type": "JSON",
+      "json": {
+        "idList": "${json-unit.ignore}"
+      }
+    }
+  },
+  "httpResponseTemplate": {
+    "template": "{{velocity-demo}}",
+    "templateType": "VELOCITY"
+  }
+}
