@@ -1,0 +1,44 @@
+name: "Test customized actions"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-customized-actions:
+    runs-on: ubuntu-latest
+
+    steps:
+      - id: run-composite-action
+        name: Run composite action
+        #注意，这里在MockserverDemo项目中使用GitHubActionsDemo中定义的actions有3种方式：
+        # 通过tag：     uses: wanxiaolong/GitHubActionsDemo/javascript-action@v1.5
+        # 通过分支名字： uses: wanxiaolong/GitHubActionsDemo/javascript-action@main
+        # 通过commitID：uses: wanxiaolong/GitHubActionsDemo/javascript-action@3796fa22eb993272e6b16d3903cb2474da515edd
+        uses: wanxiaolong/GitHubActionsDemo/composite-action@main
+        with:
+          name: "Test Composite User"
+
+      - id: run-docker-action
+        name: Run docker action
+        uses: wanxiaolong/GitHubActionsDemo/docker-action@v1
+        with:
+          name: "Test Docker User"
+
+      - name: Get docker action output
+        # 在这里获取run-docker-action 这个step的 docker-action-output 变量
+        run: 'echo "Get action output: ${{ steps.run-docker-action.outputs.docker-action-output }}"'
+
+      - id: run-javascript-action
+        name: Run javascript action
+        uses: wanxiaolong/GitHubActionsDemo/javascript-action@3796fa22eb993272e6b16d3903cb2474da515edd
+        with:
+          name: "Test Nodejs User"
+
+      - name: Get javascript action output
+        # 在这里获取run-javascript-action 这个step的 javascript-action-output 变量
+        run: 'echo "Get action output: ${{ steps.run-javascript-action.outputs.javascript-action-output }}"'

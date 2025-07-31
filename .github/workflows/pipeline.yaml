@@ -1,37 +1,61 @@
+#name：为 workflow 命名，这里叫 "CI/CD pipeline"，这个名称会在 GitHub Actions 的用户界面中显示，方便用户识别。
 name: CI/CD pipeline
 
+#on：定义触发 workflow 的条件。
+#push：指每次代码推送都会触发 workflow。
+#pull_request：提PR的时候触发 workflow。
+#branches：限定触发的分支范围。这个 workflow 会在代码推送到以下分支时触发：main
 on:
   push:
     branches:
       - main
-      - feature/github-actions
+  pull_request:
+    branches:
+      - main
 
+#jobs：定义 workflow 中的主要任务。
+#pipeline：这是任务的唯一标识符，表示这个任务的名称。
+#runs-on：指定运行 workflow 的虚拟机环境，这里选择 ubuntu-latest，是 GitHub 提供的最新 Ubuntu 版本托管 runner。
 jobs:
   pipeline:
     runs-on: ubuntu-latest
 
+    #env：定义环境变量，这些变量会被后面的步骤读取和使用。
     env:
       HOOK_PATH: src/main/java/com/demo/hooks/UpdateExpectationHook.java
 
+    #workflow的任务是通过多个步骤（steps）来完成的。
+    #每个step是独立的指令，可以是安装工具、运行脚本、或者调用外部 Actions。
     steps:
+      #name：定义这个step的名字，将会在构建的日志中显示
       - name: Checkout Code
+        #uses：指明使用 GitHub Marketplace 的现成 Action 工具 actions/checkout@v4，
+        #用来从 GitHub 仓库中检出当前分支的代码（默认是当前触发事件的分支）。
         # see: https://github.com/marketplace/actions/checkout
         uses: actions/checkout@v4
 
+      #此步骤会在虚拟机中安装并配置 JDK 21 环境，供后续步骤使用。
       - name: Setup JDK
+        #使用 GitHub Marketplace 的现成 Action 工具 actions/setup-java@v4 来设置runner的JDK。
         # see: https://github.com/marketplace/actions/setup-java-jdk
         uses: actions/setup-java@v4
+        #with：为这个action提供输入参数。这些参数都是运行这个action中定义的input。
         with:
           java-version: 21
           distribution: 'temurin'
 
+      #此步骤会编译并执行UpdateExpectationHook类，用于替换mockserver的expectations。
       - name: Build Project
+        #run：运行一个脚本。这里以“|”开头，在yaml中表示一个多行文本组成的脚本。
+        #对于gradle项目，通常是./gradlew clean build命令来构建。
+        #对于maven项目，通常是mvn clean install来构建。
         run: |
           javac -d . $HOOK_PATH
           java -classpath . com.demo.hooks.UpdateExpectationHook
           ls -al ./config
 
+      #模拟一个构建Docker镜像的step
       - name: Build Docker Image And Push
         run: |
-          echo "This is the output of step: Build Docker Image And Push"
+          echo "Here we should run: docker build xxx && docker push"
         
