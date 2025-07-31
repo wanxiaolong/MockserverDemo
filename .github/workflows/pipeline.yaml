@@ -1,0 +1,37 @@
+name: CI/CD pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - feature/github-actions
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+
+    env:
+      HOOK_PATH: src/main/java/com/demo/hooks/UpdateExpectationHook.java
+
+    steps:
+      - name: Checkout Code
+        # see: https://github.com/marketplace/actions/checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        # see: https://github.com/marketplace/actions/setup-java-jdk
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: 'temurin'
+
+      - name: Build Project
+        run: |
+          javac -d . $HOOK_PATH
+          java -classpath . com.demo.hooks.UpdateExpectationHook
+          ls -al ./config
+
+      - name: Build Docker Image And Push
+        run: |
+          echo "This is the output of step: Build Docker Image And Push"
+        
